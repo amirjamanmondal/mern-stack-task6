@@ -8,10 +8,6 @@ import router from "./router/customerRoute.js";
 
 const app = express();
 
-dotenv.config();
-
-const port = process.env.PORT || 5000;
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -24,9 +20,10 @@ app.use(
   })
 );
 
-app.use(cookieParser({
-  secret: process.env.COOKIE_SECRET || "your_secret_key",
-}));
+dotenv.config();
+
+const port = process.env.PORT || 5000;
+app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your_secret_key",
