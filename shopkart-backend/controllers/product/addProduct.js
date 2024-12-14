@@ -5,9 +5,6 @@ async function addProduct(req, res) {
     const { name, description, price, category, countInStock } = req.body;
     const image = req.file.filename; // get the image path from the request body
 
-    console.log(image);
-
-    console.log(name);
     if (!name || !description || !price || !countInStock) {
       res.status(400).json("Please fill all the fields");
       return;

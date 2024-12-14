@@ -13,7 +13,6 @@ const initializePassport = (passport) => {
       async (req, email, password, done) => {
         try {
           const userType = req.body.userType;
-          console.log(userType);
 
           const user = await User.findOne({ email, userType });
 

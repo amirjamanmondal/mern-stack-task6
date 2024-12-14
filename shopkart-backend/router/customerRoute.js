@@ -1,8 +1,12 @@
 import express from "express";
+import passport from "passport";
 import signupUser from "../controllers/user/signupUser.js";
 import isAuthenticated from "../middleware/isAuthenticated.js";
 import logoutUser from "../controllers/user/logoutUser.js";
-import passport from "passport";
+import addToCart from "../controllers/product/addToCart.js";
+import getCartProduct from "../controllers/product/getCartProduct.js";
+import removeFromCart from "../controllers/product/removeFromCart.js";
+import getAllProducts from "../controllers/product/getAllProducts.js";
 
 const router = express.Router();
 
@@ -17,7 +21,9 @@ router.post("/login", (req, res, next) => {
     }
     if (!user) {
       // Handle failure message
-      return res.status(401).json({ message: info.message || "Authentication failed" });
+      return res
+        .status(401)
+        .json({ message: info.message || "Authentication failed" });
     }
     // Log the user in
     req.logIn(user, (err) => {
@@ -38,12 +44,18 @@ router.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
-
-
 router.get("/", isAuthenticated, (req, res) => {
   const user = req.user;
   res.status(200).json({ message: "welcome to home page", user });
 });
 router.get("/logout", isAuthenticated, logoutUser);
+
+router.post("/addToCart/:id", isAuthenticated, addToCart);
+
+router.get("/getCartProduct", isAuthenticated, getCartProduct);
+
+router.delete("/removeFromCart/:id", isAuthenticated, removeFromCart);
+
+router.get("/getProduct", isAuthenticated, getAllProducts);
 
 export default router;
