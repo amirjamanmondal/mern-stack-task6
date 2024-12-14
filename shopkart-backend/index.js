@@ -5,6 +5,9 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import router from "./router/customerRoute.js";
+import initializePassport from "./helpers/passportConfig.js";
+import passport from "passport";
+import sellerRoute from "./router/sellerRoute.js";
 
 const app = express();
 
@@ -32,8 +35,21 @@ app.use(
     cookie: { maxAge: 4 * 60 * 60 * 1000 },
   })
 );
+app.use(passport.initialize());
+app.use(
+  passport.session({
+    secret: process.env.SESSION_SECRET || "your_secret_key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 4 * 60 * 60 * 1000 },
+  })
+);
 
-app.use("/user", router);
+initializePassport(passport);
+
+app.use("/uploads", express.static("./upload/"));
+
+app.use("/user", router, sellerRoute);
 
 app.listen(port, function () {
   console.log(`server is running on port ${port}`);

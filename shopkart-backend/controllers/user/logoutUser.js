@@ -1,22 +1,18 @@
-async function logoutUser(req, res) {
-  let invalidatedTokens = [];
+function Logout(req, res, next) {
   try {
-    const authHeader = req.headers["authorization"];
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(400).json({ message: "No token provided" });
+    if (!req.isAuthenticated()) {
+      return res.send({ message: "Please login..." });
     }
 
-    const token = authHeader.split(" ")[1];
-
-    invalidatedTokens.push(token);
-    res.status(200).json({ message: "Logged out successfully." });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error logging out user",
-      error: error.message,
+    req.logOut((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.send({ message: "Logout Successfully" });
     });
+  } catch (error) {
+    res.status(500).send("internal server error during logout", error.message);
   }
 }
 
-export default logoutUser;
+export default Logout;

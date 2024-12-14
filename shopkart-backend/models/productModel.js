@@ -10,6 +10,11 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    seller: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     price: {
       type: Number,
       required: true,
@@ -19,8 +24,9 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      type: String,
+      enum: ["smartphone", "gadgets", "kitchen", "electronics", "home"],
+      default:'smartphone',
       required: true,
     },
     countInStock: {
