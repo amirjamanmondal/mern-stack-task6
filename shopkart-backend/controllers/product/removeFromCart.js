@@ -1,4 +1,3 @@
-import Product from "../../models/productModel.js";
 import Cart from "../../models/cartModel.js";
 
 async function removeFromCart(req, res) {
