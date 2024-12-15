@@ -1,3 +1,4 @@
+import Product from "../../models/productModel.js";
 import Cart from "../../models/cartModel.js";
 
 async function removeFromCart(req, res) {
@@ -7,11 +8,10 @@ async function removeFromCart(req, res) {
     const { productId } = req.body; // Get productId from the request body
 
     if (user.userType === "seller") {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
-        message: "You dont have the permission to access this route",
+        message: "You don't have permission to access this route",
       });
-      return;
     }
 
     if (!productId) {
@@ -58,10 +58,39 @@ async function removeFromCart(req, res) {
     // Save the updated cart
     await cart.save();
 
-    res.status(200).json({
+    // Recalculate totalPrice for all products in the cart using aggregation
+    const updatedCart = await Cart.aggregate([
+      { $match: { _id: cart._id } }, // Match the specific cart
+      { $unwind: "$products" }, // Deconstruct the products array
+      {
+        $lookup: {
+          from: "products", // Reference the Product collection
+          localField: "products.product",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" }, // Deconstruct the productDetails array
+      {
+        $addFields: {
+          "products.totalPrice": {
+            $multiply: ["$products.quantity", "$productDetails.price"],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          user: { $first: "$user" },
+          products: { $push: "$products" },
+        },
+      },
+    ]);
+
+    return res.status(200).json({
       success: true,
       message: "Product removed from cart",
-      cart: cart,
+      cart: updatedCart[0],
     });
   } catch (error) {
     res.status(500).json({

@@ -34,14 +34,44 @@ async function addToCart(req, res) {
         products: [
           {
             product: product._id,
-            quantity: 1,
+            quantity: 1, // Default quantity
           },
         ],
       });
 
       await newCart.save();
     }
-    return res.status(201).json("Product added to cart");
+
+    // Calculate totalPrice using aggregation
+    const updatedCart = await Cart.aggregate([
+      { $match: { user: user._id } }, // Match the user's cart
+      { $unwind: "$products" }, // Deconstruct the products array
+      {
+        $lookup: {
+          from: "products", // Reference the Product collection
+          localField: "products.product",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" }, // Deconstruct the productDetails array
+      {
+        $addFields: {
+          "products.totalPrice": {
+            $multiply: ["$products.quantity", "$productDetails.price"],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          user: { $first: "$user" },
+          products: { $push: "$products" },
+        },
+      },
+    ]);
+
+    return res.status(201).json(updatedCart[0]);
   } catch (error) {
     res.status(500).json(error.message);
   }
