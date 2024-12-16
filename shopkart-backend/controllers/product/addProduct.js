@@ -2,6 +2,9 @@ import productModel from "../../models/productModel.js";
 
 async function addProduct(req, res) {
   try {
+    console.log(req.file);
+    console.log(req.body);
+
     const { name, description, price, category, countInStock } = req.body;
     const image = req.file.filename; // get the image path from the request body
 

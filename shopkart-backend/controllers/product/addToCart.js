@@ -8,27 +8,35 @@ async function addToCart(req, res) {
     const product = await Product.findById(id);
 
     if (user.userType === "seller") {
-      res.status(403).json("Seller can't add product to cart");
-      return;
+      return res.status(403).json("Seller can't add product to cart");
     }
 
     if (!product) {
       return res.status(404).json("Product not found");
     }
 
-    const cart = await Cart.findOne({
-      user: user._id,
-      products: { $elemMatch: { product: product._id } },
-    });
+    // Find the cart by user ID directly
+    const cart = await Cart.findOne({ user: user._id });
 
     if (cart) {
-      cart.products.forEach((item) => {
-        if (item.product.toString() === product._id.toString()) {
-          item.quantity++;
-        }
-      });
+      // Check if the product already exists in the cart
+      const productInCart = cart.products.find((item) => item.product.toString() === product._id.toString());
+
+      if (productInCart) {
+        // If product is already in the cart, increment the quantity
+        productInCart.quantity++;
+      } else {
+        // If the product is not in the cart, add it with quantity 1
+        cart.products.push({
+          product: product._id,
+          quantity: 1, // Default quantity
+        });
+      }
+
+      // Save the updated cart
       await cart.save();
     } else {
+      // If the cart doesn't exist, create a new one
       const newCart = new Cart({
         user: user._id,
         products: [
@@ -73,7 +81,7 @@ async function addToCart(req, res) {
 
     return res.status(201).json(updatedCart[0]);
   } catch (error) {
-    res.status(500).json(error.message);
+    res.status(500).json(error);
   }
 }
 

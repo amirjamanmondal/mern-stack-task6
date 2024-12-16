@@ -10,9 +10,7 @@ import passport from "passport";
 import sellerRoute from "./router/sellerRoute.js";
 
 const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+dotenv.config();
 
 app.use(
   cors({
@@ -23,9 +21,6 @@ app.use(
   })
 );
 
-dotenv.config();
-
-const port = process.env.PORT || 5000;
 app.use(cookieParser());
 app.use(
   session({
@@ -35,6 +30,10 @@ app.use(
     cookie: { maxAge: 4 * 60 * 60 * 1000 },
   })
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(passport.initialize());
 app.use(
   passport.session({
@@ -50,6 +49,8 @@ initializePassport(passport);
 app.use("/uploads", express.static("./upload/"));
 
 app.use("/user", router, sellerRoute);
+
+const port = process.env.PORT || 5000;
 
 app.listen(port, function () {
   console.log(`server is running on port ${port}`);

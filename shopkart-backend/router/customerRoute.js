@@ -7,6 +7,7 @@ import addToCart from "../controllers/product/addToCart.js";
 import getCartProduct from "../controllers/product/getCartProduct.js";
 import removeFromCart from "../controllers/product/removeFromCart.js";
 import getAllProducts from "../controllers/product/getAllProducts.js";
+import getOneProduct from "../controllers/product/getOneProduct.js";
 
 const router = express.Router();
 
@@ -57,5 +58,7 @@ router.get("/getCartProduct", isAuthenticated, getCartProduct);
 router.delete("/removeFromCart/:id", isAuthenticated, removeFromCart);
 
 router.get("/getProduct", isAuthenticated, getAllProducts);
+
+router.get("/getOneProduct/:id", isAuthenticated, getOneProduct);
 
 export default router;
