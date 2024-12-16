@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({ name }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -25,6 +25,7 @@ const Navbar = () => {
 
         {/* Links */}
         <div className="hidden md:flex space-x-6">
+          <p className="hover:text-yellow-500 cursor-pointer"> {name}</p>
           <a href="/" className="hover:text-yellow-500">
             Home
           </a>

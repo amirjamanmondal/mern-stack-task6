@@ -1,32 +1,36 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 
 const UploadImage = ({ file, setFile }) => {
-  const fileInputRef = useRef(null); // Create a reference for the file input
+  const fileInputRef = useRef(null);
 
-  function handleChange(e) {
-    console.log(e.target.files);
+  const handleChange = (e) => {
+    setFile(e.target.files[0]); // Set the selected file
+  };
 
-    setFile(URL.createObjectURL(e.target.files[0]));
-  }
-
-  function handleRemove() {
-    setFile(null); // Clear the image URL
+  const handleRemove = () => {
+    setFile(null); // Clear the selected file
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Clear the file input
+      fileInputRef.current.value = ""; // Reset the file input field
     }
-  }
+  };
 
   return (
     <div className="App">
       <h2>Add Image:</h2>
-      <input type="file" onChange={handleChange} ref={fileInputRef} />
+      {/* Add name="image" here */}
+      <input
+        type="file"
+        name="image" // This is the key that Multer expects
+        onChange={handleChange}
+        ref={fileInputRef}
+      />
       <button onClick={handleRemove} style={{ marginTop: "10px" }}>
         Remove Image
       </button>
       {file && (
         <div>
           <img
-            src={file}
+            src={URL.createObjectURL(file)}
             alt="Uploaded Preview"
             style={{ maxWidth: "200px", marginTop: "10px" }}
           />

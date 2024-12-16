@@ -1,58 +1,40 @@
-import { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import Login from "./components/auth/Login";
-import UploadImage from "./components/common/UploadImage";
 import AddProduct from "./components/forms/AddProduct";
 import ProductCard from "./components/forms/ProductCard";
 import Signup from "./components/auth/Signup";
-import SliderImage from "./components/common/SliderImage";
 import Navbar from "./components/header/Navbar";
 import Footer from "./components/footer/Footer";
+import Home from "./components/pages/Home";
+import Dashbord from "./components/pages/Dashbord";
 
 const App = () => {
-  const [products, setProducts] = useState(null);
-
+  const [name, setName] = useState("");
   useEffect(() => {
-    async function fetchProducts() {
-      const res = await axios.get(`http://localhost:8000/user/getProduct`, {
+    async function checkUser() {
+      const res = await axios.get("http://localhost:8000/user/", {
         withCredentials: true,
       });
       const data = res.data;
-      setProducts(data.products);
-      toast(data.message);
+      if (data) {
+        setName(data.user.name);
+      }
     }
+    checkUser();
   }, []);
-
-  if (!products) {
-    return( <div>Loading...</div>)
-  }
-
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gray-100">
-      <Toaster />
-      <Navbar />
-      <div className="w-full h-fit flex items-center justify-evenly flex-wrap gap-4 row-span-3 my-4">
-        <SliderImage />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-      </div>
+      <Navbar name={name} />
 
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/dashbord" element={<Dashbord />} />
       </Routes>
       <Footer />
     </div>

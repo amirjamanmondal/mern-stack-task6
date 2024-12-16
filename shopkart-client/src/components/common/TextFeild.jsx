@@ -3,7 +3,15 @@ import React from "react";
 const TextFeild = ({ type, name, placeholder, value, id, setValue }) => {
   return (
     <input
-      type={type}
+      type={
+        type === "text"
+          ? "text"
+          : type === "email"
+          ? "email"
+          : type === "password"
+          ? "password"
+          : "number"
+      }
       name={name}
       placeholder={placeholder}
       value={value}
