@@ -3,85 +3,80 @@ import Cart from "../../models/cartModel.js";
 
 async function addToCart(req, res) {
   try {
-    const id = req.params.id;
+    const productId = req.params.id;
     const user = req.user;
-    const product = await Product.findById(id);
 
+    // Check if the user is a seller
     if (user.userType === "seller") {
-      return res.status(403).json("Seller can't add product to cart");
+      return res.status(403).json("Sellers cannot add products to the cart");
     }
 
+    // Fetch the product details
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json("Product not found");
     }
 
-    // Find the cart by user ID directly
-    const cart = await Cart.findOne({ user: user._id });
+    // Find the user's cart
+    let cart = await Cart.findOne({ user: user._id });
+    let updatedProduct;
 
     if (cart) {
       // Check if the product already exists in the cart
-      const productInCart = cart.products.find((item) => item.product.toString() === product._id.toString());
+      const productInCart = cart.products.find(
+        (item) => item.product.toString() === product._id.toString()
+      );
 
       if (productInCart) {
-        // If product is already in the cart, increment the quantity
+        // Increment quantity and update total price
         productInCart.quantity++;
+        productInCart.pricePerQty = product.price;
+        productInCart.totalPrice = productInCart.quantity * product.price;
+        updatedProduct = productInCart;
       } else {
-        // If the product is not in the cart, add it with quantity 1
-        cart.products.push({
+        // Add new product to the cart
+        const newProduct = {
           product: product._id,
-          quantity: 1, // Default quantity
-        });
+          quantity: 1,
+          pricePerQty: product.price,
+          totalPrice: product.price,
+        };
+        cart.products.push(newProduct);
+        updatedProduct = newProduct;
       }
 
       // Save the updated cart
       await cart.save();
     } else {
-      // If the cart doesn't exist, create a new one
-      const newCart = new Cart({
+      // Create a new cart if it doesn't exist
+      const newProduct = {
+        product: product._id,
+        quantity: 1,
+        pricePerQty: product.price,
+        totalPrice: product.price,
+      };
+      cart = new Cart({
         user: user._id,
-        products: [
-          {
-            product: product._id,
-            quantity: 1, // Default quantity
-          },
-        ],
+        products: [newProduct],
       });
+      await cart.save();
 
-      await newCart.save();
+      updatedProduct = newProduct;
     }
 
-    // Calculate totalPrice using aggregation
-    const updatedCart = await Cart.aggregate([
-      { $match: { user: user._id } }, // Match the user's cart
-      { $unwind: "$products" }, // Deconstruct the products array
-      {
-        $lookup: {
-          from: "products", // Reference the Product collection
-          localField: "products.product",
-          foreignField: "_id",
-          as: "productDetails",
-        },
-      },
-      { $unwind: "$productDetails" }, // Deconstruct the productDetails array
-      {
-        $addFields: {
-          "products.totalPrice": {
-            $multiply: ["$products.quantity", "$productDetails.price"],
-          },
-        },
-      },
-      {
-        $group: {
-          _id: "$_id",
-          user: { $first: "$user" },
-          products: { $push: "$products" },
-        },
-      },
-    ]);
+    // Populate the added/updated product details
+    const populatedProduct = await Cart.populate(updatedProduct, {
+      path: "product",
+      select: "name price image",
+    });
 
-    return res.status(201).json(updatedCart[0]);
+    return res.status(201).json({
+      message: "Product added/updated successfully",
+      product: populatedProduct,
+    });
   } catch (error) {
-    res.status(500).json(error);
+    console.error("Error adding to cart:", error);
+    return res.status(500).json({ message: "Server Error", error });
   }
 }
 

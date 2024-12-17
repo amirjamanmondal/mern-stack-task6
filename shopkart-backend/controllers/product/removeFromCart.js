@@ -2,9 +2,9 @@ import Cart from "../../models/cartModel.js";
 
 async function removeFromCart(req, res) {
   try {
-    const cartId = req.params.id; // Get cart ID from params
+    // Get cart ID from params
     const user = req.user; // Extract user ID from authenticated user
-    const { productId } = req.body; // Get productId from the request body
+    const { id } = req.params; // Get id from the request params
 
     if (user.userType === "seller") {
       return res.status(401).json({
@@ -13,7 +13,7 @@ async function removeFromCart(req, res) {
       });
     }
 
-    if (!productId) {
+    if (!id) {
       return res.status(400).json({
         success: false,
         message: "Product ID is required",
@@ -21,7 +21,7 @@ async function removeFromCart(req, res) {
     }
 
     // Find the cart for the user
-    const cart = await Cart.findOne({ _id: cartId, user: user._id });
+    const cart = await Cart.findOne({ user: user._id });
 
     if (!cart) {
       return res.status(404).json({
@@ -34,7 +34,7 @@ async function removeFromCart(req, res) {
 
     // Iterate over the products in the cart
     cart.products.forEach((item, index) => {
-      if (item.product.toString() === productId) {
+      if (item.product.toString() === id) {
         productFound = true;
 
         // If quantity is 1, remove the product
