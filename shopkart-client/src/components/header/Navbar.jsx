@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const Navbar = ({ user }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -8,7 +9,7 @@ const Navbar = ({ user }) => {
       <div className="w-full container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <div className="text-2xl font-bold">
-          <a href="/">E-Shop</a>
+          <a href="/">Shopkart.com</a>
         </div>
 
         {/* Search Bar */}
@@ -24,7 +25,8 @@ const Navbar = ({ user }) => {
         </div>
 
         {/* Links */}
-        <div className="hidden md:flex space-x-6">
+
+        {user.userType==="customer"?<div className="hidden md:flex space-x-6">
           <p className="hover:text-yellow-500 cursor-pointer"> {user?.name}</p>
           <a href="/" className="hover:text-yellow-500">
             Home
@@ -38,7 +40,13 @@ const Navbar = ({ user }) => {
           <a href="/profile" className="hover:text-yellow-500">
             Profile
           </a>
-        </div>
+        </div>: user.userType==="seller"?<div className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-md text-sm">
+        <a href="/seller-profile" className="hover:text-yellow-500">
+            Dashboard
+          </a>
+        </div>:<div>
+          <NavLink to={'/login'} className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-md text-sm">Register Now</NavLink>
+          </div>}
 
         {/* Hamburger Menu */}
         <button

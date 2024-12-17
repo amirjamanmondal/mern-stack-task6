@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Button from "../common/Button";
 import TextFeild from "../common/TextFeild";
 import UploadImage from "../common/UploadImage";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
@@ -37,7 +37,7 @@ const AddProduct = () => {
       );
 
       const data = res.data;
-      console.log("Response:", data);
+      toast(data?.message);
     } catch (error) {
       console.error(
         "Error:",
@@ -48,6 +48,7 @@ const AddProduct = () => {
 
   return (
     <form className="w-full h-fit flex flex-col gap-4 px-10 my-4">
+      <Toaster />
       <UploadImage file={file} setFile={setFile} />
       <TextFeild
         type="text"
@@ -63,7 +64,7 @@ const AddProduct = () => {
         id="description"
         onChange={(e) => setDescription(e.target.value)}
         rows="4"
-        className="p-2 resize-none"
+        className="resize-none p-2 w-full rounded-lg text-blue-700 font-semibold placeholder:text-blue-700 placeholder:font-semibold border-2 border-blue-700 focus:outline-none focus:border-blue-500"
       />
       <TextFeild
         type="number"
@@ -77,6 +78,7 @@ const AddProduct = () => {
         id="category"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
+        className="p-2 w-full rounded-lg text-blue-700 font-semibold placeholder:text-blue-700 placeholder:font-semibold border-2 border-blue-700 focus:outline-none focus:border-blue-500"
       >
         <option value="Electronics">Electronics</option>
         <option value="Clothing">Clothing</option>
@@ -97,7 +99,7 @@ const AddProduct = () => {
       />
       <button
         type="submit"
-        className="w-full h-fit text-center py-2 bg-gray-600 shadow-lg border-white hover:bg-green-600 rounded-md"
+        className="w-full h-fit text-center py-2 bg-yellow-300 hover:bg-green-600 rounded-md text-lg font-semibold"
         onClick={handleAddProduct}
       >
         Add Product

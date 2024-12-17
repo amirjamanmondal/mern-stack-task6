@@ -1,6 +1,5 @@
 import React, { useReducer } from "react";
 import TextFeild from "../common/TextFeild";
-import Button from "../common/Button";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +43,7 @@ const Login = () => {
       );
       const data = res.data;
       console.log(data.user);
-      
+
       // localStorage.setItem("user", JSON.stringify(data.user.email));
       toast(data.message);
       console.log(res.data);
@@ -55,7 +54,8 @@ const Login = () => {
   }
 
   return (
-    <form className="w-fit h-fit mx-auto flex flex-col gap-4 p-4">
+    <form className="w-96 h-fit mx-0 flex flex-col gap-8 p-8 bg-blue-300 shadow-lg border rounded-md my-8">
+      <h1 className="w-full flex justify-center text-3xl font-semibold text-blue-700">Login</h1>
       <TextFeild
         type="email"
         name="email"
@@ -80,16 +80,17 @@ const Login = () => {
         onChange={(e) =>
           dispatch({ type: "SET_USER_TYPE", payload: e.target.value })
         }
+        className="p-2 w-full rounded-lg text-blue-700 font-semibold border-2 border-blue-700 focus:outline-none focus:border-blue-500"
       >
         <option value="">Select User Type</option>
         <option value="customer">Customer</option>
         <option value="seller">Seller</option>
       </select>
-      <h1 className="w-full text-sm">
-        Don't have an account? <a href="/signup">Signup</a>
+      <h1 className="w-full font-semibold p-2 ">
+        Don't have an account? <a href="/signup" className="hover:text-blue-700">Signup</a>
       </h1>
       <button
-        className="w-fit h-fit px-4 py-2 bg-yellow-600 hover:bg-green-600 rounded-md flex justify-center items-center "
+        className="w-full h-fit px-4 py-2 bg-yellow-600 hover:bg-green-600 rounded-md flex justify-center items-center "
         onClick={(e) => {
           e.preventDefault();
           handleLogin();
@@ -97,7 +98,6 @@ const Login = () => {
       >
         Login
       </button>
-      {/* <Button value={"Login"} onClickHandler={Login} /> */}
     </form>
   );
 };

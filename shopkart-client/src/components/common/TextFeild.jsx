@@ -17,8 +17,9 @@ const TextFeild = ({ type, name, placeholder, value, id, setValue }) => {
       value={value}
       id={id}
       onChange={(e) => setValue(e.target.value)}
-      className="px-2"
+      className="p-2 w-full rounded-lg text-blue-700 font-semibold placeholder:text-blue-700 placeholder:font-semibold border-2 border-blue-700 focus:outline-none focus:border-blue-500"
       autoComplete={type === "email" && "password" ? "on" : "off"}
+      
     />
   );
 };
