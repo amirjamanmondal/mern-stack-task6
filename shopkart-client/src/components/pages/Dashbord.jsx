@@ -3,7 +3,7 @@ import axios from "axios";
 import Button from "../common/Button";
 import CartProduct from "../common/CartProduct";
 
-const Dashbord = () => {
+const Dashbord = ({ state, dispatch }) => {
   const [products, setProducts] = useState(null);
   async function fetchCartProduct() {
     try {
@@ -11,8 +11,8 @@ const Dashbord = () => {
         withCredentials: true,
       });
       const data = res.data;
-      console.log(data.products,"hello");
-      setProducts(data.products);
+      console.log(data?.products);
+      setProducts(data?.products);
     } catch (error) {
       console.error(error);
     }
@@ -34,7 +34,13 @@ const Dashbord = () => {
           products.map((product) => {
             return (
               <div key={product._id}>
-                <CartProduct product={product.product} qty={product.quantity} totalPrice={product.totalPrice?totalPrice:0}/>
+                <CartProduct
+                  product={product.product}
+                  qty={product.quantity}
+                  totalPrice={product.totalPrice}
+                  state={state}
+                  dispatch={dispatch}
+                />
               </div>
             );
           })}

@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../common/Button";
+import axios from "axios";
+import { NavLink } from "react-router-dom";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, state, dispatch }) => {
   const description = product.description;
-  const countWord = description.length;
-  console.log(product);
+  const [productCount, setProductCount] = useState(0);
+
+  // const countWord = description.length;
+
+  async function handleAddtoCart(e, id) {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/user/addToCart/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      const data = res.data;
+      console.log(data);
+      setProductCount(data.product.quantity);
+      dispatch({ type: "ADD_TO_CART", payload: data.product });
+      console.log("dispatched ",state);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // console.log(product);
 
   return (
     <div className="w-56 h-fit px-4 py-4 text-start  bg-white rounded-lg shadow-lg border flex justify-center items-center flex-col gap-2">
@@ -21,7 +44,21 @@ const ProductCard = ({ product }) => {
         {countWord >= 10 ? description.slice(0, 22) + " " : description}
       </p> */}
       <div className="w-full flex justify-between items-center gap-2">
-        <Button value={"Add Cart"} />
+        {productCount === 0 ? (
+          <button
+            className="w-full h-fit px-2 py-1 text-md bg-yellow-400 rounded-md hover:bg-green-700"
+            onClick={(e) => handleAddtoCart(e, product._id)}
+          >
+            Add Cart
+          </button>
+        ) : (
+          <NavLink
+            to={"/dashbord"}
+            className="w-full h-fit px-2 py-1 text-md bg-yellow-400 rounded-md hover:bg-green-700"
+          >
+            Go to Cart
+          </NavLink>
+        )}
         <Button value={"Buy now"} />
       </div>
     </div>

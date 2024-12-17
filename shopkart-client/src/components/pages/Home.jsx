@@ -4,7 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import SliderImage from "../common/SliderImage";
 import ProductCard from "../forms/ProductCard";
 
-const Home = () => {
+const Home = ({state, dispatch}) => {
   const [products, setProducts] = useState(null);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const Home = () => {
         {products &&
           products.length > 0 &&
           products.map((product) => {
-            return <ProductCard key={product._id} product={product} />;
+            return <ProductCard key={product._id} product={product} state={state} dispatch={dispatch}/>;
           })}
       </div>
     </div>
