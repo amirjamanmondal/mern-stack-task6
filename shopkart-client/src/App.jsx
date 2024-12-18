@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import axios from "axios";
 // import toast, { Toaster } from "react-hot-toast";
@@ -14,16 +14,12 @@ import reducer from "./components/helper/hooks";
 import NotFound from "./components/pages/NotFound";
 import SliderImage from "./components/common/SliderImage";
 import SellerDashboard from "./components/pages/seller/SellerDashboard";
-
-const initialState = {
-  products: [],
-};
+import ShopProducts from "./components/cards/ShopProducts";
 
 const App = () => {
   const [user, setUser] = useState();
-  const [state, dispatch] = useReducer(reducer, initialState);
   const navigate = useNavigate();
-  useEffect(() => {
+  useLayoutEffect(() => {
     async function checkUser() {
       try {
         const res = await axios.get("http://localhost:8000/user/", {
@@ -35,7 +31,7 @@ const App = () => {
         }
       } catch (error) {
         console.log("Unauthorized access");
-        
+
         if (location.pathname !== "/signup" && location.pathname !== "/login") {
           navigate("/login");
         }
@@ -47,9 +43,11 @@ const App = () => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gray-100">
       <Navbar user={user ? user : ""} />
-      {location.pathname !== "/signup" && !user && <SliderImage />}
+      {location.pathname !== "/signup" &&
+        location.pathname !== "/dashbord" &&
+        !user && <SliderImage />}
       <Routes>
-        <Route path="/" element={<Home state={state} dispatch={dispatch} />} />
+        <Route path="/" element={<Home user={user}/>} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
@@ -61,7 +59,7 @@ const App = () => {
           path="/dashbord"
           element={
             user?.userType === "customer" ? (
-              <Dashbord state={state} dispatch={dispatch} user={user} />
+              <Dashbord user={user} />
             ) : (
               <NotFound />
             )
@@ -71,6 +69,7 @@ const App = () => {
           path="/seller-profile"
           element={<SellerDashboard user={user} />}
         />
+        <Route path="/shop" element={<ShopProducts />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

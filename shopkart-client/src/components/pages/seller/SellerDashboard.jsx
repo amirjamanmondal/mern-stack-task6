@@ -54,6 +54,11 @@ const SellerDashboard = ({ user }) => {
     }
   }
 
+  const discount = (price) => {
+    const discountedPrice = price - price / 100;
+    return Math.round(discountedPrice);
+  };
+
   return (
     <div className="w-full h-fit flex items-start justify-between gap-4 border-t-4 border-yellow-400">
       <div className="w-1/3 h-fit bg-red-400 flex justify-start items-center">
@@ -97,6 +102,7 @@ const SellerDashboard = ({ user }) => {
         </nav>
         <hr className="w-full h-1 bg-yellow-300" />
         {products?.map((product) => {
+          const price = discount(product?.price);
           return (
             <div
               key={product?._id}
@@ -105,13 +111,14 @@ const SellerDashboard = ({ user }) => {
               <img
                 src={product?.image}
                 alt=""
-                className="w-40 h-40 mix-blend-darken"
+                className="w-40 h-40 mix-blend-normal"
               />
               <hr className="w-full h-1 bg-yellow-300" />
               <h1 className="w-full">{product?.name}</h1>
-              <h2 className="w-full">{product?.price}</h2>
-              <h2 className="w-full">{product?.countInStock}</h2>
-              <h2 className="w-full">{product?.category.toUpperCase()}</h2>
+              <h2 className="w-full">Base Price {product?.price}</h2>
+              <h2 className="w-full">Discounted Price {price}</h2>
+              <h2 className="w-full">In Stoke - {product?.countInStock}</h2>
+              <h2 className="w-full">Type - {product?.category.toUpperCase()}</h2>
               <button
                 className="w-full h-fit p-4 bg-yellow-300 hover:bg-green-600 rounded-xl"
                 onClick={(e) => deleteProduct({ e, id: product._id })}

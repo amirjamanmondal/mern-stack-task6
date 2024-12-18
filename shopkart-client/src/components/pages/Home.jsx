@@ -3,8 +3,9 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import ProductCard from "../cards/ProductCard";
 
-const Home = () => {
+const Home = ({user}) => {
   const [products, setProducts] = useState(null);
+  
 
   useEffect(() => {
     async function fetchProducts() {
@@ -33,7 +34,7 @@ const Home = () => {
         {products &&
           products.length > 0 &&
           products.map((product) => {
-            return <ProductCard key={product._id} product={product} />;
+            return <ProductCard key={product._id} product={product} user={user} />;
           })}
       </div>
     </div>
