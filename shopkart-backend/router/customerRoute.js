@@ -8,6 +8,7 @@ import getCartProduct from "../controllers/product/getCartProduct.js";
 import removeFromCart from "../controllers/product/removeFromCart.js";
 import getAllProducts from "../controllers/product/getAllProducts.js";
 import getOneProduct from "../controllers/product/getOneProduct.js";
+import findUserName from "../controllers/user/findUserName.js";
 
 const router = express.Router();
 
@@ -60,5 +61,7 @@ router.delete("/removeFromCart/:id", isAuthenticated, removeFromCart);
 router.get("/getProduct", isAuthenticated, getAllProducts);
 
 router.get("/getOneProduct/:id", isAuthenticated, getOneProduct);
+
+router.get("/searchName/:id", isAuthenticated, findUserName);
 
 export default router;
