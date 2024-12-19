@@ -5,6 +5,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const SellerDashboard = ({ user }) => {
+  console.log(user);
+  
   const [products, setProducts] = React.useState(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -83,6 +85,7 @@ const SellerDashboard = ({ user }) => {
               {user?.userType.toUpperCase()}
             </span>
           </h4>
+          <p>{user?.address}</p>
           <button
             className="w-1/3 h-fit p-2 bg-yellow-500 rounded-md hover:bg-green-600 mt-6 text-red-500 font-bold border-2 border-white"
             onClick={(e) => handleLogout(e)}

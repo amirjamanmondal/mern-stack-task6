@@ -69,7 +69,7 @@ const App = () => {
           path="/seller-profile"
           element={<SellerDashboard user={user} />}
         />
-        <Route path="/shop" element={<ShopProducts />} />
+        <Route path="/shop" element={<ShopProducts user={user} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

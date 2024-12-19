@@ -1,8 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const CartProduct = ({ product, qty, totalPrice, handleRemoveFromCart }) => {
+const CartProduct = ({ product, qty }) => {
   const [productData, setProductData] = useState(null);
+  const [removeState, setRemoveState] = useState(qty);
+
+  async function handleRemoveFromCart({ e, id }) {
+    e.preventDefault();
+    try {
+      const res = await axios.patch(
+        `http://localhost:8000/user/removeFromCart/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      window.location.reload();
+      // setRemoveState();
+    } catch (error) {
+      console.log(error);
+      // Handle error, e.g., show an error message to the user
+    }
+  }
 
   useEffect(() => {
     const fetchCartProduct = async () => {
@@ -12,7 +29,6 @@ const CartProduct = ({ product, qty, totalPrice, handleRemoveFromCart }) => {
           { withCredentials: true }
         );
         const data = res.data;
-        console.log(data);
         setProductData(data);
       } catch (error) {
         console.log(error);
@@ -35,11 +51,9 @@ const CartProduct = ({ product, qty, totalPrice, handleRemoveFromCart }) => {
       <p className="w-full h-full flex justify-center items-center text-center flex-col gap-2 text-blue-600">
         {productData?.price}/-
       </p>
-      <p className="w-full h-full flex justify-center items-center text-center flex-col gap-2 text-red-600">
-        {totalPrice}
-      </p>
+
       <p className="w-full h-full flex justify-center items-center text-center flex-col gap-2 ">
-        {qty}
+        {removeState}
       </p>
       <button
         className="w-full h-full px-2 py-1 text-md text-red-400 rounded-md hover:text-green-700"

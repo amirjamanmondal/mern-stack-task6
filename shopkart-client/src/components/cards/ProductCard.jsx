@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const ProductCard = ({ product, user }) => {
-  const description = product.description;
   const [seller, setSeller] = useState(null);
-  // const countWord = description.length;
 
   async function handleAddtoCart(e, id) {
     e.preventDefault();
@@ -25,16 +23,17 @@ const ProductCard = ({ product, user }) => {
     return Math.round(discountedPrice);
   };
   const price = discount();
-  console.log(user.userType);
-  
-  
+  console.log(user?.userType);
 
   useEffect(() => {
     async function fetchSeller(id) {
       try {
-        const res = await axios.get(`http://localhost:8000/user/searchName/${id}`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `http://localhost:8000/user/searchName/${id}`,
+          {
+            withCredentials: true,
+          }
+        );
         const data = res.data;
         setSeller(data);
         console.log(data.user);
@@ -45,7 +44,6 @@ const ProductCard = ({ product, user }) => {
     fetchSeller(product.seller);
   }, []);
 
-  // console.log(product);
 
   return (
     <div className="w-56 h-fit px-4 py-4 text-start  bg-white rounded-lg shadow-lg border flex justify-center items-center flex-col gap-2">
@@ -65,10 +63,12 @@ const ProductCard = ({ product, user }) => {
         </span>
       </h3>
 
-      <h4 className="w-full text-blue-400">Seller: <span className="text-green-500 font-mono font-semibold">{seller?.user?.name}</span></h4>
-      {/* <p className="w-full">
-        {countWord >= 10 ? description.slice(0, 22) + " " : description}
-      </p> */}
+      <h4 className="w-full text-blue-400">
+        Seller:{" "}
+        <span className="text-green-500 font-mono font-semibold">
+          {seller?.user?.name}
+        </span>
+      </h4>
       {user?.userType === "customer" ? (
         <div className="w-full flex justify-between items-center gap-2 ">
           <button
@@ -82,7 +82,9 @@ const ProductCard = ({ product, user }) => {
             Buy now
           </button>
         </div>
-      ):""}
+      ) : (
+        ""
+      )}
     </div>
   );
 };

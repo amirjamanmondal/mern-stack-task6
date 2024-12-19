@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import CartProduct from "../common/CartProduct";
 import toast from "react-hot-toast";
@@ -9,23 +9,27 @@ const Dashbord = ({ user }) => {
   const address = user?.address;
 
   const [products, setProducts] = useState(null);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState("cart");
 
   const navigate = useNavigate();
-  async function fetchCartProduct(e) {
-    e.preventDefault();
-    setValue(e.target.value);
-    try {
-      const res = await axios.get("http://localhost:8000/user/getCartProduct", {
-        withCredentials: true,
-      });
-      const data = res.data;
-      console.log(data?.products);
-      setProducts(data?.products);
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    async function fetchCartProduct() {
+      try {
+        const res = await axios.get(
+          "http://localhost:8000/user/getCartProduct",
+          {
+            withCredentials: true,
+          }
+        );
+        const data = res.data;
+        console.log(data?.products);
+        setProducts(data?.products);
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }
+    fetchCartProduct();
+  }, []);
   console.log(products);
 
   const handleLogout = async (e) => {
@@ -48,21 +52,6 @@ const Dashbord = ({ user }) => {
     }
   };
 
-  async function handleRemoveFromCart({ e, id }) {
-    e.preventDefault();
-    try {
-      const res = await axios.delete(
-        `http://localhost:8000/user/removeFromCart/${id}`,
-
-        { withCredentials: true }
-      );
-      setProducts(products?.filter((item) => item._id !== id));
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   function Clicked(e) {
     e.preventDefault();
     setValue(e.target.value);
@@ -74,7 +63,7 @@ const Dashbord = ({ user }) => {
         <button
           value={"cart"}
           className="w-full h-fit px-2 py-1 text-md bg-yellow-400 rounded-md hover:bg-green-700"
-          onClick={(e) => fetchCartProduct(e)}
+          onClick={(e) => Clicked(e)}
         >
           Cart
         </button>
@@ -107,8 +96,6 @@ const Dashbord = ({ user }) => {
                   <CartProduct
                     product={product.product}
                     qty={product.quantity}
-                    totalPrice={product.totalPrice}
-                    handleRemoveFromCart={handleRemoveFromCart}
                   />
                 </div>
               );

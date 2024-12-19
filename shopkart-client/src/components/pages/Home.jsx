@@ -3,9 +3,8 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import ProductCard from "../cards/ProductCard";
 
-const Home = ({user}) => {
+const Home = ({ user }) => {
   const [products, setProducts] = useState(null);
-  
 
   useEffect(() => {
     async function fetchProducts() {
@@ -15,8 +14,6 @@ const Home = ({user}) => {
         });
         const data = res.data;
         setProducts(data.products);
-        toast(data.message);
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -26,15 +23,14 @@ const Home = ({user}) => {
 
   return (
     <div className="w-full h-fit bg-white flex flex-col items-start justify-start">
-      <Toaster />
-
       <div className="w-full flex gap-2 flex-wrap my-4 px-4">
-        {/* {!products && <div>Loading Products... </div>} */}
         {products && products.length === 0 && <div>No Products Found</div>}
         {products &&
           products.length > 0 &&
           products.map((product) => {
-            return <ProductCard key={product._id} product={product} user={user} />;
+            return (
+              <ProductCard key={product._id} product={product} user={user} />
+            );
           })}
       </div>
     </div>
