@@ -56,7 +56,7 @@ router.post("/addToCart/:id", isAuthenticated, addToCart);
 
 router.get("/getCartProduct", isAuthenticated, getCartProduct);
 
-router.delete("/removeFromCart/:id", isAuthenticated, removeFromCart);
+router.patch("/removeFromCart/:id", isAuthenticated, removeFromCart);
 
 router.get("/getProduct", isAuthenticated, getAllProducts);
 

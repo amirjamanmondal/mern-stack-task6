@@ -54,42 +54,14 @@ async function removeFromCart(req, res) {
       });
     }
 
-    // Save the updated cart
+    // Save the updated cart without recalculating totalPrice
     await cart.save();
 
-    // Recalculate totalPrice for all products in the cart using aggregation
-    const updatedCart = await Cart.aggregate([
-      { $match: { _id: cart._id } }, // Match the specific cart
-      { $unwind: "$products" }, // Deconstruct the products array
-      {
-        $lookup: {
-          from: "products", // Reference the Product collection
-          localField: "products.product",
-          foreignField: "_id",
-          as: "productDetails",
-        },
-      },
-      { $unwind: "$productDetails" }, // Deconstruct the productDetails array
-      {
-        $addFields: {
-          "products.totalPrice": {
-            $multiply: ["$products.quantity", "$productDetails.price"],
-          },
-        },
-      },
-      {
-        $group: {
-          _id: "$_id",
-          user: { $first: "$user" },
-          products: { $push: "$products" },
-        },
-      },
-    ]);
-
+    // Send response with the updated cart (excluding totalPrice)
     return res.status(200).json({
       success: true,
       message: "Product removed from cart",
-      cart: updatedCart[0],
+      cart: cart,
     });
   } catch (error) {
     res.status(500).json({

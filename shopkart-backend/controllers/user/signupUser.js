@@ -7,12 +7,10 @@ async function signupUser(req, res) {
     const data = req.body;
     console.log(data);
 
-    const { name, email, password, userType, phone } = userModelValidator(
-      data,
-      true
-    );
+    const { name, email, password, userType, phone, address } =
+      userModelValidator(data, true);
 
-    if (!name && !email && !password && !userType && !phone) {
+    if (!name && !email && !password && !userType && !phone && !address) {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
     const findDuplicate = await User.findOne({ email });
@@ -29,6 +27,7 @@ async function signupUser(req, res) {
       password: hashedPassword,
       userType,
       phone,
+      address,
     });
     await user.save();
 
