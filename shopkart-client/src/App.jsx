@@ -42,7 +42,6 @@ const App = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gray-100">
-      <Navbar user={user ? user : ""} />
       {location.pathname !== "/signup" &&
         location.pathname !== "/dashbord" &&
         !user && <SliderImage />}

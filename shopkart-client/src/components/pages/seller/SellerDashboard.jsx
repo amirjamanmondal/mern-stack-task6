@@ -3,10 +3,11 @@ import img from "../../../assets/customer.jpg";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { SellerNavbar } from "../../header/Navbar";
 
 const SellerDashboard = ({ user }) => {
   console.log(user);
-  
+
   const [products, setProducts] = React.useState(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -62,9 +63,10 @@ const SellerDashboard = ({ user }) => {
   };
 
   return (
-    <div className="w-full h-fit flex items-start justify-between gap-4 border-t-4 border-yellow-400">
-      <div className="w-1/3 h-fit bg-red-400 flex justify-start items-center">
-        <div className="w-full h-fit flex flex-col gap-2 p-6">
+    <div className="w-full h-fit flex items-start flex-col justify-between gap-4 border-t-4 border-yellow-400">
+      <SellerNavbar user={user} />
+      <div className="w-full h-fit  flex justify-start items-start">
+        <div className="w-1/3 h-fit bg-red-400 flex flex-col gap-2 p-6">
           <img
             src={img}
             alt="customerprofile"
@@ -93,45 +95,50 @@ const SellerDashboard = ({ user }) => {
             Logout
           </button>
         </div>
-      </div>
-      <div className="w-full h-full flex gap-4 justify-start flex-wrap">
-        <nav className="w-full h-fit p-4 bg-gray-400 flex justify-end">
-          <NavLink
-            to={"/add-product"}
-            className="w-fit h-fit p-2 bg-yellow-500 rounded-md hover:bg-green-600"
-          >
-            Add Product
-          </NavLink>
-        </nav>
-        <hr className="w-full h-1 bg-yellow-300" />
-        {products?.map((product) => {
-          const price = discount(product?.price);
-          return (
-            <div
-              key={product?._id}
-              className="w-80 h-fit text-black font-semibold text-lg shadow-lg p-4 rounded-md bg-white/80 mix-blend-darken flex gap-2 flex-col"
+        <div className="w-full h-full flex flex-col pl-4">
+          <nav className="w-full h-fit p-4 bg-gray-400 flex justify-end">
+            <NavLink
+              to={"/add-product"}
+              className="w-fit h-fit p-2 bg-yellow-500 rounded-md hover:bg-green-600"
             >
-              <img
-                src={product?.image}
-                alt=""
-                className="w-40 h-40 mix-blend-normal"
-              />
-              <hr className="w-full h-1 bg-yellow-300" />
-              <h1 className="w-full">{product?.name}</h1>
-              <h2 className="w-full">Base Price {product?.price}</h2>
-              <h2 className="w-full">Discounted Price {price}</h2>
-              <h2 className="w-full">In Stoke - {product?.countInStock}</h2>
-              <h2 className="w-full">Type - {product?.category.toUpperCase()}</h2>
-              <button
-                className="w-full h-fit p-4 bg-yellow-300 hover:bg-green-600 rounded-xl"
-                onClick={(e) => deleteProduct({ e, id: product._id })}
-              >
-                Delete
-              </button>
-            </div>
-          );
-        })}
+              Add Product
+            </NavLink>
+          </nav>
+          <hr className="w-full h-1 bg-yellow-300" />
+          <div className="w-full h-fit flex gap-4 justify-start flex-wrap p-2">
+            {products?.map((product) => {
+              const price = discount(product?.price);
+              return (
+                <div
+                  key={product?._id}
+                  className="w-80 h-fit text-black font-semibold text-lg shadow-lg p-4 rounded-md bg-white/80 mix-blend-darken flex gap-2 flex-col"
+                >
+                  <img
+                    src={product?.image}
+                    alt=""
+                    className="w-40 h-40 mix-blend-normal"
+                  />
+                  <hr className="w-full h-1 bg-yellow-300" />
+                  <h1 className="w-full">{product?.name}</h1>
+                  <h2 className="w-full">Base Price {product?.price}</h2>
+                  <h2 className="w-full">Discounted Price {price}</h2>
+                  <h2 className="w-full">In Stoke - {product?.countInStock}</h2>
+                  <h2 className="w-full">
+                    Type - {product?.category.toUpperCase()}
+                  </h2>
+                  <button
+                    className="w-full h-fit p-4 bg-yellow-300 hover:bg-green-600 rounded-xl"
+                    onClick={(e) => deleteProduct({ e, id: product._id })}
+                  >
+                    Delete
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
+      <div className="text-red-700">djfhjd</div>
     </div>
   );
 };

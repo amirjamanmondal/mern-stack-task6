@@ -2,6 +2,9 @@ import React, { useReducer } from "react";
 import TextFeild from "../common/TextFeild";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { useState } from "react";
+import gotoicon from "../../assets/goto.svg";
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
@@ -26,9 +29,8 @@ function reducer(state, action) {
 const Login = () => {
   // useReducer hook
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
   // Destructure state variables
   const { email, password, userType } = state;
 
@@ -43,19 +45,25 @@ const Login = () => {
       );
       const data = res.data;
       console.log(data.user);
-
+      setUser(data);
       // localStorage.setItem("user", JSON.stringify(data.user.email));
       toast(data.message);
-      console.log(res.data);
-      navigate("/");
+      console.log(data?.message);
+      // setTimeout(() => {
+      //   navigate("/");
+      // }, 3000);
     } catch (error) {
+      toast(error.message);
       console.log(error);
     }
   }
 
   return (
     <form className="w-96 h-fit mx-0 flex flex-col gap-8 p-8 bg-blue-300 shadow-lg border rounded-md my-8">
-      <h1 className="w-full flex justify-center text-3xl font-semibold text-blue-700">Login</h1>
+      <Toaster />
+      <h1 className="w-full flex justify-center text-3xl font-semibold text-blue-700">
+        Login
+      </h1>
       <TextFeild
         type="email"
         name="email"
@@ -87,7 +95,10 @@ const Login = () => {
         <option value="seller">Seller</option>
       </select>
       <h1 className="w-full font-semibold p-2 ">
-        Don't have an account? <a href="/signup" className="hover:text-blue-700">Signup</a>
+        Don't have an account?{" "}
+        <a href="/signup" className="hover:text-blue-700">
+          Signup
+        </a>
       </h1>
       <button
         className="w-full h-fit px-4 py-2 bg-yellow-600 hover:bg-green-600 rounded-md flex justify-center items-center "
@@ -98,6 +109,16 @@ const Login = () => {
       >
         Login
       </button>
+      {user ? (
+        <span className="w-full font-semibold my-2 bg-lime-600 mix-blend-color-burn">
+          <img
+            src={gotoicon}
+            alt="img"
+            className="w-full h-8 rounded-md"
+            onClick={() => navigate("/")}
+          />
+        </span>
+      ) : null}
     </form>
   );
 };
